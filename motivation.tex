@@ -1,3 +1,24 @@
 \section{Motivation}\label{sec:motivation}
 
+Traditionally, satellite internet usage has traded latency and bandwidth for global, reliable connectivity.
+However, renewed private interest has resulted in satellite internet that can compete with terrestrial offerings, paving the way for mass market adoption.
+As a result, satellite internet hardware is now designed to provide a good user experience, making configuration as easy as possible out of the box.
+However, these constraints can sometimes come at the cost of security.
+
+For example, the Starlink user terminal is configured by visiting the public website \texttt{my.starlink.com} from the same local network as the terminal.
+The web page immediately shows the status of the dish, and allows the user to configure it.
+To support this, the admin commands sent over the local network are not password protected.
+This contrasts with admin pages as typically implemented on common consumer routers, which require connecting to a local IP address and password authentication.
+
+It is well known that even password authenticated router administration pages are vulnerable to attackers on the local network; the password can be extracted from plaintext HTTP through network sniffing.
+The Starlink user terminal is similarly vulnerable, since any device connected to the local network to explore and change the user terminal settings, which can include compromised devices.
+This also allows drive-by javascript attacks, in which the user terminal can be configured from a public website, on legacy browsers that do not enforce the same-origin policy.
+
+Additionally, certificates have not been issued to secure the traffic to the user terminal, meaning they are conducted in plain http.
+\texttt{my.starlink.com} is therefore also served in plain http, since browsers do not permit resource sharing from a secure origin (https) to an insecure origin (http).
+Although Starlink can prevent man-in-the-middle attacks by ensuring that \texttt{my.starlink.com} is only served through their encrypted satellite data link, this still opens the door for other attacks such as DNS hijacking and IP spoofing.
+
+% As a result, exploits against the user terminal can be executed from the local network.
+
+
 Test cite~\cite{roccaUnderstanding2021}.
