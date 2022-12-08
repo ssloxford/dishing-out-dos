@@ -1,3 +1,28 @@
 \section{Impact}\label{sec:impact}
 
-Hello there
+This attack can have a signficant impact -- since the state of the dish is frozen, an adversary can achieve persistent denial of service by first sending a command to stow the dish.
+This will interrupt service until the dish can be physically power-cycled, which is not always trivial.
+As long as the adversary remains on the local network, this attack can be repeated to cause continuous loss of service for users on the network.
+Therefore, attackers that can maintain presence on the network will have the greatest impact.
+
+\textbf{TODO drive-by attacks, potential for remote attacks on non-CORS browsers or through rogue executables}
+
+Since the attack can be deployed from any device connected to the local network, large networks containing many untrusted users are at the greatest risk.
+Such networks also suffer greater impact, as more devices are affected by network disruptions.
+The impact is magnified when Starlink is the only source of internet access for that customer.
+Examples may include maritime and aviation traffic, internet cafés, or large organisations.
+
+Restoring service requires physical access to the terminal, so disruption will be increased where access is difficult or restricted.
+Examples may include secured rooftop installations.
+
+\subsection{Responsible Disclosure}\label{sec:responsible-disclosure}
+
+This vulnerability has been reported to Starlink through their provided channels.
+It has been triaged and reproduced by their security team, and the root cause was determined to be a bug in the gRPC server's handling of edge cases.
+A fix for this problem will have been fully deployed by the time of this paper's publication.
+
+\textbf{TODO something about how they suggest the ``Guest Network'' mode to isolate devices from being able to access the gRPC server.}
+
+\textbf{TODO distinguish from discussion of design issues}
+
+We would like to thank the Starlink responsible disclosure team for promptly confirming the issue and deploying a fix, and working with us to \textbf{TODO}.
