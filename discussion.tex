@@ -1,3 +1,43 @@
 \section{Discussion}\label{sec:discussion}
 
 Yes
+
+\begin{comment}
+  Edd's notes:
+
+Related work:
+
+Zoom exploit, hitting services running on the local network
+
+https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy
+"Cross-origin writes are typically allowed"
+
+https://bugzilla.mozilla.org/show_bug.cgi?id=629094
+https://www.grepular.com/Abusing_HTTP_Status_Codes_to_Expose_Private_Information
+HTTP status code abuse to extract information cross-origin
+
+https://bugzilla.mozilla.org/show_bug.cgi?id=354493
+Zoom videoconferencing problem
+
+https://bugzilla.mozilla.org/show_bug.cgi?id=371598
+Drive-by pharming through browsers
+
+
+Security constraints:
+
+Defeating drive-by javascript:
+unencrypted passwords prevents silent drive-by javascript, potentially
+websites can still brute force or phish the password from you
+some sort of CSRF token from my.starlink.com?
+
+Defeating spoofing my.starlink.com:
+Vulnerable: because it's using plaintext http
+Reason: you can't make a request to an insecure origin from a secure origin (need citation)
+use https
+passwords prevent silently changing the dish
+
+Attackers on local network:
+
+HSTS could be used with TLS to secure this
+CSRF tokens
+\end{comment}
