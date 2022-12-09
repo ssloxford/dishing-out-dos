@@ -5,7 +5,14 @@ This will interrupt service until the dish can be physically power-cycled, which
 As long as the adversary remains on the local network, this attack can be repeated to cause continuous loss of service for users on the network.
 Therefore, attackers that can maintain presence on the network will have the greatest impact.
 
-\textbf{TODO drive-by attacks, potential for remote attacks on non-CORS browsers or through rogue executables}
+There is also potential for remote attacks, provided the attacker can in some way cause a device on the same network as the dish to send HTTP requests.
+The Cross-Origin Resource Sharing (CORS) \textbf{TODO cite} policies of modern browsers prevent javascript from making unauthorized requests to external domains or addresses, so javascript-based attacks are unlikely unless legacy browsers are used.
+However, the attacker could trick a user into executing a malicious executable or script, which could easily be used to make these requests.
+
+Furthermore, in some cases ``drive-by'' attacks are possible -- if the network is not password protected, an attacker can connect and execute the attack while passing nearby.
+Since the Starlink routers do not have passwords by default, this could be a serious concern.
+Executing the attack only requires a few seconds of connection on the local network, and can cause outages on the order of minutes or hours.
+This can be mitigated by using the ``guest network'' mode provided by the router -- this adds an unprotected guest network which does not have access to the administrative interface.
 
 Since the attack can be deployed from any device connected to the local network, large networks containing many untrusted users are at the greatest risk.
 Such networks also suffer greater impact, as more devices are affected by network disruptions.
@@ -20,9 +27,3 @@ Examples may include secured rooftop installations.
 This vulnerability has been reported to Starlink through their provided channels.
 It has been triaged and reproduced by their security team, and the root cause was determined to be a bug in the gRPC server's handling of edge cases.
 A fix for this problem will have been fully deployed by the time of this paper's publication.
-
-\textbf{TODO something about how they suggest the ``Guest Network'' mode to isolate devices from being able to access the gRPC server.}
-
-\textbf{TODO distinguish from discussion of design issues}
-
-We would like to thank the Starlink responsible disclosure team for promptly confirming the issue and deploying a fix, and working with us to \textbf{TODO}.

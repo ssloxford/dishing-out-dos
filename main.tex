@@ -58,6 +58,7 @@ martin.strohmeier@armasuisse.ch}
 ivan.martinovic@cs.ox.ac.uk}}
 \end{comment}
 
+\begin{comment}
 \IEEEoverridecommandlockouts
 \makeatletter\def\@IEEEpubidpullup{6.5\baselineskip}\makeatother
 \IEEEpubid{\parbox{\columnwidth}{
@@ -68,10 +69,15 @@ ivan.martinovic@cs.ox.ac.uk}}
     www.ndss-symposium.org
 }
 \hspace{\columnsep}\makebox[\columnwidth]{}}
+\end{comment}
 
 \maketitle
 
 \input{abstract.tex}
+
+\section*{Acknowledgments}
+
+The authors would like to thank the Starlink responsible disclosure team for promptly confirming the issue and deploying a fix, and working with us to \textbf{TODO}.
 
 \input{motivation.tex}
 \input{attack.tex}
@@ -84,4 +90,9 @@ ivan.martinovic@cs.ox.ac.uk}}
 
 \bibliographystyle{IEEEtranS}
 \bibliography{IEEEabrv,main}
+
+\appendices
+
+\input{appendices/stow-and-kill.tex}
+
 \end{document}

@@ -2,25 +2,9 @@
 
 \begin{figure}
     \centering\includegraphics[width=\columnwidth]{img/modem.pdf}
-    \caption{Overview of the Starlink modem functionality. gRPC calls are encapsulated in HTTP POST requests by the web interface, which are decoded and processed. Malformed gRPC requests cause the command handler to crash, resulting in the modem no longer being able to respond to commands.}
+    \caption{Overview of the Starlink modem functionality. gRPC calls are encapsulated within HTTP POST requests by the web interface, which are decoded and processed. Malformed gRPC requests cause the command handler to crash, resulting in the modem no longer being able to respond to commands.}
     \label{fig:modem}
 \end{figure}
-
-\begin{comment}
-\begin{itemize}
-    \item the terminal can be administered over the local network, usually through the ``my.starlink.com'' web interface
-    \item this interface makes gRPC calls to the modem, encapsulating calls in HTTP POST requests
-    \item these calls can be sent entirely separately from the web interface from any device on the local network
-    \begin{itemize}
-        \item through local gRPC clients (this can also be used to probe the modem for functionality)
-        \item sending HTTP requests, e.g. through curl (encapsulated gRPC just looks like bytes though)
-    \end{itemize}
-    \item this means we can spam commands like ``stow'' to stop the dish from working
-    \item gRPC commands encapsulated within HTTP are very small (command payload is only 2-3 bytes normally) so we can fuzz
-    \item ``kill'' command (show bytes) causes gRPC handler to crash, freezing settings/state until next reboot
-    \item requires physical power-cycle to restore functionality
-\end{itemize}
-\end{comment}
 
 In this section we explore the underlying architecture of the Starlink modem, and how this opens the system up to denial-of-service attacks.
 
@@ -28,10 +12,12 @@ The user terminal is typically administered via the ``\url{my.starlink.com}'' we
 This interface makes calls to the modem over the local network, using the gRPC (Google Remote Procedure Calls) framework for sending remote commands~\cite{gRPC}.
 These in turn are encapsulated within HTTP ``POST'' requests, allowing the browser to \textbf{TODO ???}
 Although typically sent using the web interface, these gRPC calls can be made on their own from any device or application on the local network \textbf{TODO}.
-\textbf{TODO local gRPC clients, HTTP requests.}
-They are also unauthenticated, requiring no credentials for commands.
+For instance, the \textit{grpcurl} utility provides a command-line interface for gRPC commands, and can be used to query the modem for available functions~\cite{gRPCurl}.
+To make HTTP-encapsulated gRPC requests, tools like \textit{curl} can be used \textbf{TODO cite?} -- however, the encoding of the command needs to be known ahead of time.
+This can be extracted using a network monitor such as \textit{Wireshark} \textbf{TODO cite?}.
 
-This interface exposes the \textbf{(TODO not quite)} full range of administrative commands, extending from telemetry queries through to commands on the dish itself.
+Although some commands require password authentication, the vast majority do not.
+Among these are telemetry and status requests, logging, and commands on the dish itself.
 As a result, an adversary on the local network can trivially cause rudimentary denial of service -- for example, by sending the ``stow'' command to rotate the dish away from the sky, leaving it unable to connect to satellites overhead.
 By repeatedly sending these commands, service is persistently denied.
 
@@ -42,5 +28,5 @@ One such command is the byte sequence \lstinline{\x00\x00\x00\x00\x03\xea>\x00},
 This stops the modem from responding to commands, but does not stop the terminal from functioning, effectively freezing its settings and state until the terminal is rebooted.
 A physical power-cycle is required in order to restore functionality.
 
-Appendix \textbf{TODO} contains a shell script to send the malformed command to a user terminal on the local network.
+Appendix~\ref{app:stow-and-kill} contains a shell script to send the malformed command to a user terminal on the local network.
 \textbf{TODO maybe picture of error message and/or stowed dish?}
