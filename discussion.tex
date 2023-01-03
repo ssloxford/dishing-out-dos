@@ -40,4 +40,11 @@ Attackers on local network:
 
 HSTS could be used with TLS to secure this
 CSRF tokens
+
+%Additionally, certificates have not been issued to secure the traffic to the user terminal, meaning they are conducted in plain http.
+%%\texttt{my.starlink.com} is therefore also served in plain http, since browsers do not permit resource sharing from a secure origin (https) to an insecure origin (http).
+%%Although Starlink can prevent man-in-the-middle attacks by ensuring that \texttt{my.starlink.com} is only served through their encrypted satellite data link, this still opens the door for other attacks such as DNS hijacking and IP spoofing.
+%
+
+
 \end{comment}

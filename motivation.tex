@@ -5,7 +5,7 @@ This page makes API calls over the local network to query and update the state, 
 
 It is well known that other routers are vulnerable to these techniques.
 Since traffic on the local network is seldom encrypted, local attackers can scrape admin passwords and potentially inject commands.
-Additionally, default admin passwords, combined with browser policies typically allowing cross-origin writes~\cite{same_origin_policy}, have also resulted in configurations vulnerable to attack from outside the local network~\cite{drive_by_pharming}.
+Additionally, default admin passwords, combined with browser policies typically allowing cross-origin writes~\cite{same_origin_policy,csrf_internal_network}, have also resulted in configurations vulnerable to attack from outside the local network~\cite{drive_by_pharming}.
 
 However, unlike other consumer routers, these commands are not password authenticated.
 This allows any device on the local network to send commands to the user terminal, and therefore exploit any vulnerabilities in the command decoding and execution logic.
