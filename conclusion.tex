@@ -1,3 +1,8 @@
 \section{Conclusion}\label{sec:conclusion}
 
-Imagine there's a really cool interesting conclusion here
+We have seen that the Starlink router was vulnerable to a denial-of-service attack through the sending of malformed commands over the router's administrative interface.
+Although this vulnerability has since been patched, it draws attention to weaknesses in the design of routers' administrative interfaces -- design choices intended to facilitate a more streamlined user experience lead to vulnerabilities which could be exploited by local attackers, or by exploiting victims' browsers.
+
+We have explored these vulnerabilities, and show that it is possible to have a polished user experience without sacrificing security.
+Some technical improvements are required, but a significant factor in this is steering users into making well-informed choices to maximize security.
+These choices include changing administrative passwords, updating TLS certificates, and making use of guest networks to reduce the risk of drive-by attacks.
