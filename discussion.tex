@@ -12,11 +12,11 @@ Some of the challenges facing secure router administration are as follows:
 
 \subsubsection{Drive-by browser exploitation}
 
-The administrative interface served at ``\url{my.starlink.com}'' makes cross-origin connections to \texttt{192.168.100.1} to configure the network.
+The administrative interface served at ``\url{http://my.starlink.com}'' makes cross-origin connections to \texttt{192.168.100.1} to configure the network.
 Modern browsers restrict these requests according to the Cross-Origin Resource Sharing (CORS) policy.
 These restrictions are primarily designed to disallow websites reading data from other websites' servers, unless that server opts in using the \texttt{Access-Control-Allow-Origin} header.
-In the case of Starlink, the server at \texttt{192.168.100.1} reports that only connections from ``\url{my.starlink.com}'' are allowed.
-As a result, browsers that enforce the CORS policy will refuse to allow websites other than ``\url{my.starlink.com}'' to read the responses of requests that are made.
+In the case of Starlink, the server at \texttt{192.168.100.1} reports that only connections from ``\url{http://my.starlink.com}'' are allowed.
+As a result, browsers that enforce the CORS policy will refuse to allow websites other than ``\url{http://my.starlink.com}'' to read the responses of requests that are made.
 
 However, in the case of the Starlink dish and several other routers~\textbf{TODO: cite}, changing the configuration doesn't require reading the response, only making the requests in the first place.
 To secure this case, non-simple requests now trigger a CORS preflight requestto confirm the \texttt{Access-Control-Allow-Origin} before sending the initial request~\cite{simple_requests, preflight_request}.
@@ -31,10 +31,10 @@ Additionally, since administrative commands can be sent from any device on the l
 As we go on to discuss in Section~\ref{sec:password_authentication}, password authentication is sufficient to significantly increase the difficulty of executing the attack.
 However, by more subtly acting on the local network, the attacker can still affect the security of the system.
 
-One method is through DNS hijacking, in which the attacker responds to DNS requests on the local network to redirect the ``\url{my.starlink.com}'' domain to their own server.
+One method is through DNS hijacking, in which the attacker responds to DNS requests on the local network to redirect the ``\url{http://my.starlink.com}'' domain to their own server.
 This is possible, even if TLS were used, since the browser does not expect a secure connection; this could potentially be resolved through the use of HSTS~\textbf{TODO: cite}.
 
-Another method is IP spoofing, in which the attacker responds to an HTTP request to ``\url{my.starlink.com}'' with a maliciously formed website in order to make the request to the router.
+Another method is IP spoofing, in which the attacker responds to an HTTP request to ``\url{http://my.starlink.com}'' with a maliciously formed website in order to make the request to the router.
 
 \subsection{Mitigations}
 
@@ -118,9 +118,9 @@ Security constraints:
 Defeating drive-by javascript:
 unencrypted passwords prevents silent drive-by javascript, potentially
 websites can still brute force or phish the password from you
-some sort of CSRF token from my.starlink.com?
+some sort of CSRF token from http://my.starlink.com?
 
-Defeating spoofing my.starlink.com:
+Defeating spoofing http://my.starlink.com:
 Vulnerable: because it's using plaintext http
 Reason: you can't make a request to an insecure origin from a secure origin (need citation)
 use https
@@ -132,8 +132,8 @@ HSTS could be used with TLS to secure this
 CSRF tokens
 
 %Additionally, certificates have not been issued to secure the traffic to the user terminal, meaning they are conducted in plain http.
-%%\texttt{my.starlink.com} is therefore also served in plain http, since browsers do not permit resource sharing from a secure origin (https) to an insecure origin (http).
-%%Although Starlink can prevent man-in-the-middle attacks by ensuring that \texttt{my.starlink.com} is only served through their encrypted satellite data link, this still opens the door for other attacks such as DNS hijacking and IP spoofing.
+%%\texttt{http://my.starlink.com} is therefore also served in plain http, since browsers do not permit resource sharing from a secure origin (https) to an insecure origin (http).
+%%Although Starlink can prevent man-in-the-middle attacks by ensuring that \texttt{http://my.starlink.com} is only served through their encrypted satellite data link, this still opens the door for other attacks such as DNS hijacking and IP spoofing.
 %
 
 

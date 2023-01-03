@@ -9,7 +9,7 @@
 In this section we explore the underlying architecture of the Starlink modem, and how this opens the system up to denial-of-service attacks.
 We also describe an attack on the command handler resulting in persistent denial-of-service.
 
-The user terminal is typically administered via the ``\url{my.starlink.com}'' web interface.
+The user terminal is typically administered via the ``\url{http://my.starlink.com}'' web interface.
 This interface sends commands to the modem over the local network, using gRPC (Google Remote Procedure Calls) encapsulated within HTTP ``POST'' requests.
 As shown in Figure~\ref{fig:modem}, these requests are decoded by a gRPC web proxy, and forwarded to a command handler.
 
