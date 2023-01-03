@@ -1,6 +1,6 @@
 \section{Fuzzer Source Code}\label{app:fuzzer}
 
-\textbf{TODO preamble}
+The following Python script iterates through all commands of length 3 with a trailing zero byte, and logs those that do not return error code 13 (invalid) or 12 (unimplemented). This can be easily modified to send commands of different lengths, or to send commands in a random order.
 
 \begin{lstlisting}
 import requests

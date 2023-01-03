@@ -14,10 +14,21 @@ This interface sends commands to the modem over the local network, using gRPC (G
 As shown in Figure~\ref{fig:modem}, these requests are decoded by a gRPC web proxy, and forwarded to a command handler.
 
 Although typically sent using the web interface, these gRPC commands can also be made on their own from any device or application on the local network.
-To make HTTP-encapsulated gRPC requests, tools like \textit{curl} can be used \textbf{TODO cite?} -- however, the format is not easy to construct manually and requires prior knowledge of the commands.
-However, valid commands can be extracted using a network monitor such as \textit{Wireshark} \textbf{TODO cite?}.
-Alternatively, gRPC commands can be sent directly -- for instance, through the \textit{grpcurl} command-line interface~\cite{gRPCurl}.
+These commands can be sent directly through tools such as the \textit{grpcurl} command-line interface~\cite{gRPCurl}.
 This can also be used to query the modem for available functions.
+Alternatively, with prior knowledge of the format and commands, HTTP-encapsulated gRPC requests can be sent directly using tools like \textit{cURL}~\cite{cURL}.
+It is not easy to construct these manually, but a network monitor such as \textit{Wireshark} can be used to extract the bytes in a command~\cite{wireshark}.
+For instance, to ``stow'' the dish, turning it away from the sky so it can be more easily transported, the following cURL command can be used:
+\begin{lstlisting}
+printf '\x00\x00\x00\x00\x03\x92}\x00' \
+| curl 'http://192.168.100.1:9201/SpaceX.API.Device.Device/Handle' \
+-X POST \
+-H 'Accept: */*' \
+-H 'Accept-Language: en-GB,en;q=0.5' \
+-H 'content-type: application/grpc-web+proto' \
+-H 'x-grpc-web: 1' \
+--data-binary @- -v | xxd
+\end{lstlisting}
 
 Although some commands require password authentication, the vast majority do not.
 Among these are telemetry and status requests, logging, and commands on the dish itself.
@@ -31,14 +42,39 @@ Through this approach we can find not only valid commands, but also invalid comm
 
 \subsection{Fuzzer}\label{sec:fuzzer}
 
-Code for the fuzzer can be found in Appendix~\textbf{TODO}.
-This script iterates through all gRPC commands of a certain length, saving all commands that result in \textbf{TODO ughhh}
+\begin{table}
+    \centering
+    \begin{tabular}{lll}
+        \toprule
+        Status code & Meaning & Frequency \\
+        \midrule
+        0  & Success                               & 0     \\
+        7  & Unable to verify signature            & 1     \\
+        12 & Unimplemented                         & 1949  \\
+        13 & Cannot parse invalid wire-format data & 63586 \\
+        \bottomrule
+    \end{tabular}
+\caption{Error codes resulting from the fuzzer on all 2-byte commands.}
+\label{tab:fuzzer-results}
+\end{table}
 
-\textbf{TODO description of how fuzzer works (inc. how to determine whether a command has done something interesting), table of results for commands of length 2}
+From looking at HTTP-encapsulated gRPC commands extracted using \textit{Wireshark}, it is clear that the payload always consists of four null bytes, followed by a byte containing the length of the command, followed by the command.
+Although the commands use a non-human-readable encoding, this knowledge of the command structure allows us to build a fuzzer that iterates through correctly-formatted commands to find those that have an effect.
 
-One such command is the byte sequence \lstinline{\x00\x00\x00\x00\x03\xea>\x00}, which causes the command handler to crash -- this is shown in Figure~\ref{fig:modem}.
+Code for the fuzzer can be found in Appendix~\ref{app:fuzzer} -- this script iterates through all gRPC commands of a certain length.
+The vast majority of these return ``invalid'' or ``unimplemented'' error codes, so the fuzzer discards these, only saving those that return other codes.
+Table~\ref{tab:fuzzer-results} shows the distribution of error codes on all 2-byte commands.
+None of these commands are valid, so we move onto 3 byte commands.
+There are too many of these to enumerate, so we focus on those ending with a zero byte, as this matches many known commands.
+
+This fuzzing approach led to the discovery of the ``kill'' command \lstinline{\x00\x00\x00\x00\x03\xea>\x00}, which causes the command handler of the user terminal to crash.
 This stops the modem from responding to commands, but does not stop the terminal from functioning, effectively freezing its settings and state until the terminal is rebooted.
 A physical power-cycle is required in order to restore functionality.
+This is shown in Figure~\ref{fig:modem}.
+\textbf{TODO maybe move figure? Make a new one? idk}
 
-Appendix~\ref{app:stow-and-kill} contains a shell script to send the malformed command to a user terminal on the local network.
+Since the modem will no longer respond to commands, the terminal is frozen in whatever state it was in before the ``kill'' command was sent.
+By first sending a command to stow the dish before sending the ``kill'' command, the adversary can cause denial of service -- it will not be possible to restore internet access until the dish is physically power-cycled.
+
+Appendix~\ref{app:stow-and-kill} contains shell scripts to send the stow command and the malformed ``kill'' command to a user terminal on the local network.
 \textbf{TODO maybe picture of error message and/or stowed dish?}
