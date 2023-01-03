@@ -70,11 +70,27 @@ There are too many of these to enumerate, so we focus on those ending with a zer
 This fuzzing approach led to the discovery of the ``kill'' command \lstinline{\x00\x00\x00\x00\x03\xea>\x00}, which causes the command handler of the user terminal to crash.
 This stops the modem from responding to commands, but does not stop the terminal from functioning, effectively freezing its settings and state until the terminal is rebooted.
 A physical power-cycle is required in order to restore functionality.
-This is shown in Figure~\ref{fig:modem}.
-\textbf{TODO maybe move figure? Make a new one? idk}
+
+
+\subsection{Exploitation}\label{sec:exploitation}
+
+\begin{figure*}
+    \centering
+    \begin{subfigure}{.23235\textwidth}
+        \centering\includegraphics[width=\textwidth]{img/stowed.png}
+        \caption{The dish in ``stowed'' mode.\vspace{1em}}
+    \end{subfigure}
+    \begin{subfigure}{.55\textwidth}
+        \centering\includegraphics[width=\textwidth]{img/offline.png}\\\vspace{.35em}
+        \centering\includegraphics[width=\textwidth]{img/unstow.png}
+        \caption{A screenshot of the web control panel error screen following the attack, and the result of sending commands to an inoperative dish.}
+    \end{subfigure}
+\caption{The outcome of a successful attack on the Starlink dish, and the resulting web control panel and response to commands.}
+\label{fig:attack-outcome}
+\end{figure*}
 
 Since the modem will no longer respond to commands, the terminal is frozen in whatever state it was in before the ``kill'' command was sent.
 By first sending a command to stow the dish before sending the ``kill'' command, the adversary can cause denial of service -- it will not be possible to restore internet access until the dish is physically power-cycled.
 
 Appendix~\ref{app:stow-and-kill} contains shell scripts to send the stow command and the malformed ``kill'' command to a user terminal on the local network.
-\textbf{TODO maybe picture of error message and/or stowed dish?}
+The outcome of this attack can be seen in Figure~\ref{fig:attack-outcome}.
