@@ -18,12 +18,12 @@ These restrictions are primarily designed to disallow websites reading data from
 In the case of Starlink, the server at \texttt{192.168.100.1} reports that only connections from ``\url{http://my.starlink.com}'' are allowed.
 As a result, browsers that enforce the CORS policy will refuse to allow websites other than ``\url{http://my.starlink.com}'' to read the responses of requests that are made.
 
-However, in the case of the Starlink dish and several other routers~\textbf{TODO: cite}, changing the configuration doesn't require reading the response, only making the requests in the first place.
+However, in the case of the Starlink dish and several other routers, changing the configuration doesn't require reading the response, only making the requests in the first place~\cite{drive_by_pharming}.
 To secure this case, non-simple requests now trigger a CORS preflight requestto confirm the \texttt{Access-Control-Allow-Origin} before sending the initial request~\cite{simple_requests, preflight_request}.
 
-In certain routers, only simple requests are required to change the state~\textbf{TODO: cite}, and are therefore vulnerable to drive-by browser exploitation even on modern browsers.
+In certain routers, only simple requests are required to change the state, and are therefore vulnerable to drive-by browser exploitation even on modern browsers~\cite{csrf_internal_network}.
 However, the POST request required for the Starlink dish is non-simple since it requires the \texttt{content-type: application/grpc-web+proto} header.
-As a result, the Starlink dish is only exploitable using this method with older, insecure browsers~\textbf{TODO: cite which browsers are vulnerable}.
+As a result, the Starlink dish is only exploitable using this method with older, insecure browsers, such as those before the W3C Recommendation on Cross-Origin Resource Sharing~\cite{cors_w3c}.
 
 \subsubsection{Local network attack}
 
@@ -32,7 +32,7 @@ As we go on to discuss in Section~\ref{sec:password_authentication}, password au
 However, by more subtly acting on the local network, the attacker can still affect the security of the system.
 
 One method is through DNS hijacking, in which the attacker responds to DNS requests on the local network to redirect the ``\url{http://my.starlink.com}'' domain to their own server.
-This is possible, even if TLS were used, since the browser does not expect a secure connection; this could potentially be resolved through the use of HSTS~\textbf{TODO: cite}.
+This is possible, even if TLS were used, since the browser does not expect a secure connection; this could potentially be resolved through the use of HTTP Strict Transport Security~\cite{rfc6797}.
 
 Another method is IP spoofing, in which the attacker responds to an HTTP request to ``\url{http://my.starlink.com}'' with a maliciously formed website in order to make the request to the router.
 
@@ -45,8 +45,8 @@ Therefore, sending HTTP requests to the router is sufficient to perform the atta
 However, implementing a password authentication system is non-trivial, and adds inconvenience to the user each time they need to use the interface.
 
 One of the key challenges is that, since the Starlink modem does not use TLS to secure the connection, any password would be sent in plain text and therefore be sniffable to adversaries on the network.
-However, password authentication by itself would prevent simple drive-by browser exploitation; a malicious website attempting to make a cross-origin request to the modem would not necessarily know the password, and therefore be unable to make the request.
-This mechanism is used by multiple consumer routers~\textbf{TODO: cite} to prevent this attack.
+However, password authentication by itself still prevents simple drive-by browser exploitation; a malicious website attempting to make a cross-origin request to the modem would not necessarily know the password, and therefore be unable to make the request.
+This mechanism is used by multiple consumer routers to attempt to prevent this attack~\cite{drive_by_pharming}.
 
 \subsubsection{Trust On First Use}
 
