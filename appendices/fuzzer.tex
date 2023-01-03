@@ -14,7 +14,6 @@ headers = {
     "content-type": "application/grpc-web+proto",
     "x-grpc-web": "1"
 }
-
 def send_request(data):
     response = requests.post(url, data=data, headers=headers)
     return dict(
@@ -23,15 +22,12 @@ def send_request(data):
         headers=response.headers,
         content=response.content
     )
-
 def generate_bytes(length, length_header=None, continue_from=None):
     length_header = length_header or length
     continue_from = continue_from or 0
-
     preamble = b'\x00\x00\x00\x00' + length_header.to_bytes(1, 'big')
     for i in range(continue_from, 256**length):
         yield preamble + i.to_bytes(length, 'big')
-
 results = []
 for data in tqdm(generate_bytes(2, length_header=3), total=256**2):
     data = data + b'\x00'
