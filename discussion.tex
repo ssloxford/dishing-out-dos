@@ -8,12 +8,30 @@ We therefore seek to outline the challenges and mitigations faced by the Starlin
 
 \subsection{Challenges}
 
+Some of the challenges facing secure router administration are as follows:
+
 \subsubsection{Drive-by browser exploitation}
 
-\textbf{TODO: write about CORS}
-\textbf{TODO: mention somewhere that older browsers are vulnerable}
+The administrative interface served at ``\url{my.starlink.com}'' makes cross-origin connections to \texttt{192.168.100.1} to configure the network.
+Modern browsers restrict these requests according to the Cross-Origin Resource Sharing (CORS) policy.
+These restrictions are primarily designed to disallow websites reading data from other websites' servers, unless that server opts in using the \texttt{Access-Control-Allow-Origin} header.
+In the case of Starlink, the server at \texttt{192.168.100.1} reports that only connections from ``\url{my.starlink.com}'' are allowed.
+As a result, browsers that enforce the CORS policy will refuse to allow websites other than \url{my.starlink.com}'' to read the responses of requests that are made.
 
-\subsubsection{Administrative credentials}
+However, in the case of the Starlink dish and several other routers~\textbf{TODO: cite}, changing the configuration doesn't require reading the response, only making the requests in the first place.
+To secure this case, non-simple requests now trigger a CORS preflight request~\cite{simple_requests, preflight_request} to confirm the \texttt{Access-Control-Allow-Origin} before sending the initial request.
+
+In certain routers, only simple requests are required to change the state~\textbf{TODO: cite}, and are therefore vulnerable to drive-by browser exploitation even on modern browsers.
+However, the POST request required for the Starlink dish is non-simple since it requires the \texttt{content-type: application/grpc-web+proto} header.
+As a result, the Starlink dish is only exploitable using this method with older, insecure browsers~\textbf{TODO: cite which browsers are vulnerable}.
+
+\subsubsection{Local attacking}
+
+DNS hijacking, etc.
+
+\subsection{Mitigations}
+
+\subsubsection{Password authentication}
 
 One of the key challenges to the security of the Starlink system is the unauthenticated nature of the commands.
 Therefore, sending HTTP requests to the router is sufficient to perform the attack, without the attacker requiring any prior information such as a password.
@@ -41,7 +59,8 @@ This same problem of packet sniffing is addressed on the public internet through
 An encrypted connection is opened between the browser and web server where a third party vouches for the authenticity of the server, preventing man-in-the-middle interception.
 
 On the surface it appears that implementing TLS in this context should be easy; certificates can be created automatically, from widely-accepted root certificate authorities, even for private network services, using tools like Let's Encrypt.
-However, there are a number of issues in implementing TLS in this context.
+Certain engineering issues would need to be overcome, such as implementing TLS across the entire modem, to allow connections from browsers which block insecure cross-origin requests from secure domains.
+However, there are also a number of fundamental issues in implementing TLS in this context.
 
 The simplest approach, which is used by certain ISPs such as FRITZ!Box, involves creating a unique certificate for each router~\cite{fritzbox_cert}.
 Since TLS certificates can only be issued for domain names, and not for IP addresses, each certificate is assigned to the same address.
@@ -50,17 +69,21 @@ The router then responds itself to requests at that domain, using its certificat
 Issues therefore arise when initiating the connection.
 If the certificate is signed by a root certificate authority, then any certificate from any router is equally valid.
 Attackers can therefore circumvent the signed check by extracting the certificate from different hardware.
-This issue is resolved if the certificate is self-signed, which allows users to download the certificate and load it into their browser to verify future connections.
+
+If instead the certificate is self-signed, users can download the certificate and load it into their browser to verify future connections.
 However, it is then impossible to secure the transfer of the certificate, during which the attacker can insert their own certificate.
 
-Even if implementing TLS with perfect security guarantees is not possible, the self-signed approach at least guarantees that an attacker has to intercept the connection where the certificate is downloaded, restricting when the attack can be performed.
-
-In the case of Starlink, there is an additional problem re. downgrade from secure origin.
+Even if implementing TLS with perfect security guarantees is not possible, the self-signed approach appears to be the most secure.
+This is because successful attackers must maintain presence and intercept the connection when the TLS certificate is downloaded in order to execute any future attack.
 
 \subsection{Guest mode}
 
-\subsection{Vanity URLs}
+Another approach is limiting access to the admin interface to a separate network or separate network interface.
+Currently, the Starlink modem partially implements this through guest network mode.
+Users connected to this guest network can't access the admin interface, protecting the terminal from reconfiguration by any device connected on the network.
 
+The terminal could be made slightly more secure by either disconnecting the administrative interface from the public internet, disabling any form of drive-by attack.
+Users would be encouraged to use only the guest network for any kind of network access.
 
 \begin{comment}
   Edd's notes:
