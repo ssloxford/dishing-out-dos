@@ -7,23 +7,35 @@
 \end{figure}
 
 In this section we explore the underlying architecture of the Starlink modem, and how this opens the system up to denial-of-service attacks.
+We also describe an attack on the command handler resulting in persistent denial-of-service.
 
 The user terminal is typically administered via the ``\url{my.starlink.com}'' web interface.
-This interface makes calls to the modem over the local network, using the gRPC (Google Remote Procedure Calls) framework for sending remote commands~\cite{gRPC}.
-These in turn are encapsulated within HTTP ``POST'' requests, allowing the browser to \textbf{TODO ???}
-Although typically sent using the web interface, these gRPC calls can be made on their own from any device or application on the local network \textbf{TODO}.
-For instance, the \textit{grpcurl} utility provides a command-line interface for gRPC commands, and can be used to query the modem for available functions~\cite{gRPCurl}.
-To make HTTP-encapsulated gRPC requests, tools like \textit{curl} can be used \textbf{TODO cite?} -- however, the encoding of the command needs to be known ahead of time.
-This can be extracted using a network monitor such as \textit{Wireshark} \textbf{TODO cite?}.
+This interface sends commands to the modem over the local network, using gRPC (Google Remote Procedure Calls) encapsulated within HTTP ``POST'' requests.
+As shown in Figure~\ref{fig:modem}, these requests are decoded by a gRPC web proxy, and forwarded to a command handler.
+
+Although typically sent using the web interface, these gRPC commands can also be made on their own from any device or application on the local network.
+To make HTTP-encapsulated gRPC requests, tools like \textit{curl} can be used \textbf{TODO cite?} -- however, the format is not easy to construct manually and requires prior knowledge of the commands.
+However, valid commands can be extracted using a network monitor such as \textit{Wireshark} \textbf{TODO cite?}.
+Alternatively, gRPC commands can be sent directly -- for instance, through the \textit{grpcurl} command-line interface~\cite{gRPCurl}.
+This can also be used to query the modem for available functions.
 
 Although some commands require password authentication, the vast majority do not.
 Among these are telemetry and status requests, logging, and commands on the dish itself.
 As a result, an adversary on the local network can trivially cause rudimentary denial of service -- for example, by sending the ``stow'' command to rotate the dish away from the sky, leaving it unable to connect to satellites overhead.
-By repeatedly sending these commands, service is persistently denied.
+By repeatedly sending these commands, service is denied for as long as the attacker can maintain presence.
 
 When encapsulated within HTTP requests, gRPC commands are very small -- the payload is usually between 2 and 5 bytes.
 This gives a sufficiently small command space for effective fuzzing, since we can send commands of the correct format with random contents to see if any are valid.
 Through this approach we can find not only valid commands, but also invalid commands that expose corner cases in the command handler, causing unexpected behavior.
+
+
+\subsection{Fuzzer}\label{sec:fuzzer}
+
+Code for the fuzzer can be found in Appendix~\textbf{TODO}.
+This script iterates through all gRPC commands of a certain length, saving all commands that result in \textbf{TODO ughhh}
+
+\textbf{TODO description of how fuzzer works (inc. how to determine whether a command has done something interesting), table of results for commands of length 2}
+
 One such command is the byte sequence \lstinline{\x00\x00\x00\x00\x03\xea>\x00}, which causes the command handler to crash -- this is shown in Figure~\ref{fig:modem}.
 This stops the modem from responding to commands, but does not stop the terminal from functioning, effectively freezing its settings and state until the terminal is rebooted.
 A physical power-cycle is required in order to restore functionality.
