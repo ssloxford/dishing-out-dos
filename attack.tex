@@ -18,17 +18,7 @@ These commands can be sent directly through tools such as the \textit{grpcurl} c
 This can also be used to query the modem for available functions.
 Alternatively, with prior knowledge of the format and commands, HTTP-encapsulated gRPC requests can be sent directly using tools like \textit{cURL}~\cite{cURL}.
 It is not easy to construct these manually, but a network monitor such as \textit{Wireshark} can be used to extract the bytes in a command~\cite{wireshark}.
-For instance, to ``stow'' the dish, turning it away from the sky so it can be more easily transported, the following cURL command can be used:
-\begin{lstlisting}
-printf '\x00\x00\x00\x00\x03\x92}\x00' \
-| curl 'http://192.168.100.1:9201/SpaceX.API.Device.Device/Handle' \
--X POST \
--H 'Accept: */*' \
--H 'Accept-Language: en-GB,en;q=0.5' \
--H 'content-type: application/grpc-web+proto' \
--H 'x-grpc-web: 1' \
---data-binary @- -v | xxd
-\end{lstlisting}
+For instance, to ``stow'' the dish, turning it away from the sky so it can be more easily transported, the cURL command given in Appendix~\ref{app:stow} can be used.
 
 Although some commands require password authentication, the vast majority do not.
 Among these are telemetry and status requests, logging, and commands on the dish itself.
@@ -92,5 +82,5 @@ A physical power-cycle is required in order to restore functionality.
 Since the modem will no longer respond to commands, the terminal is frozen in whatever state it was in before the ``kill'' command was sent.
 By first sending a command to stow the dish before sending the ``kill'' command, the adversary can cause denial of service -- it will not be possible to restore internet access until the dish is physically power-cycled.
 
-Appendix~\ref{app:stow-and-kill} contains shell scripts to send the stow command and the malformed ``kill'' command to a user terminal on the local network.
+Appendices~\ref{app:stow} and~\ref{app:kill} contain shell scripts to send the stow command and the malformed ``kill'' command to a user terminal on the local network.
 The outcome of this attack can be seen in Figure~\ref{fig:attack-outcome}.
