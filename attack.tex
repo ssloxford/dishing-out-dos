@@ -6,8 +6,8 @@
     \label{fig:modem}
 \end{figure}
 
-In this section we explore the underlying architecture of the Starlink modem, and how this opens the system up to denial-of-service attacks.
-We also describe an attack on the command handler resulting in persistent denial-of-service.
+In this section we explore the underlying architecture of the Starlink modem, and how this opens the system up to denial of service attacks.
+We also describe an attack on the command handler resulting in persistent denial of service.
 
 The user terminal is typically administered via the ``\url{http://my.starlink.com}'' web interface.
 This interface sends commands to the modem over the local network, using gRPC (Google Remote Procedure Calls) encapsulated within HTTP ``POST'' requests.
@@ -17,11 +17,11 @@ Although typically sent using the web interface, these gRPC commands can also be
 These commands can be sent directly through tools such as the \textit{grpcurl} command-line interface~\cite{gRPCurl}.
 This can also be used to query the modem for available functions.
 Alternatively, with prior knowledge of the format and commands, HTTP-encapsulated gRPC requests can be sent directly using tools like \textit{cURL}~\cite{cURL}.
-It is not easy to construct these manually, but a network monitor such as \textit{Wireshark} can be used to extract the bytes in a command~\cite{wireshark}.
+It is not easy to construct these manually, but a network monitor such as \textit{Wireshark} can be used to inspect the bytes in a command~\cite{wireshark}.
 For instance, to ``stow'' the dish, turning it away from the sky so it can be more easily transported, the cURL command given in Appendix~\ref{app:stow} can be used.
 
 Although some commands require password authentication, the vast majority do not.
-Among these are telemetry and status requests, logging, and commands on the dish itself.
+Among these are telemetry and status requests, logging, and commands affecting the physical state of the dish itself.
 As a result, an adversary on the local network can trivially cause rudimentary denial of service -- for example, by sending the ``stow'' command to rotate the dish away from the sky, leaving it unable to connect to satellites overhead.
 By repeatedly sending these commands, service is denied for as long as the attacker can maintain presence.
 
@@ -48,7 +48,7 @@ Through this approach we can find not only valid commands, but also invalid comm
 \label{tab:fuzzer-results}
 \end{table}
 
-From looking at HTTP-encapsulated gRPC commands extracted using \textit{Wireshark}, it is clear that the payload always consists of four null bytes, followed by a byte containing the length of the command, followed by the command.
+From looking at HTTP-encapsulated gRPC commands extracted using \textit{Wireshark}, it is clear that the payload always consists of four null bytes, followed by a byte containing the length of the command, followed by the command itself.
 Although the commands use a non-human-readable encoding, this knowledge of the command structure allows us to build a fuzzer that iterates through correctly-formatted commands to find those that have an effect.
 
 Code for the fuzzer can be found in Appendix~\ref{app:fuzzer} -- this script iterates through all gRPC commands of a certain length.
@@ -57,7 +57,7 @@ Table~\ref{tab:fuzzer-results} shows the distribution of error codes on all 2-by
 None of these commands are valid, so we move onto 3 byte commands.
 There are too many of these to enumerate, so we focus on those ending with a zero byte, as this matches many known commands.
 
-This fuzzing approach led to the discovery of the ``kill'' command \lstinline{\x00\x00\x00\x00\x03\xea>\x00}, which causes the command handler of the user terminal to crash.
+This fuzzing approach led to the discovery of the ``kill'' command \lstinline{00 00 00 00 03 EA 3E 00}, which causes the command handler of the user terminal to crash.
 This stops the modem from responding to commands, but does not stop the terminal from functioning, effectively freezing its settings and state until the terminal is rebooted.
 A physical power-cycle is required in order to restore functionality.
 
@@ -66,11 +66,12 @@ A physical power-cycle is required in order to restore functionality.
 
 \begin{figure*}
     \centering
-    \begin{subfigure}{.23235\textwidth}
+    \begin{subfigure}{.2\textwidth}
+        \centering\includegraphics[width=\textwidth]{img/unstowed.png}\\\vspace{.35em}
         \centering\includegraphics[width=\textwidth]{img/stowed.png}
-        \caption{The dish in ``stowed'' mode.\vspace{1em}}
+        \caption{The dish in ``active'' (top) and ``stowed'' modes.}
     \end{subfigure}
-    \begin{subfigure}{.55\textwidth}
+    \begin{subfigure}{.5779\textwidth}
         \centering\includegraphics[width=\textwidth]{img/offline.png}\\\vspace{.35em}
         \centering\includegraphics[width=\textwidth]{img/unstow.png}
         \caption{A screenshot of the web control panel error screen following the attack, and the result of sending commands to an inoperative dish.}

@@ -16,7 +16,8 @@ However, the attacker could trick a user into executing a malicious executable o
 Furthermore, in some cases ``drive-by'' attacks are possible -- if the network is not password protected, an attacker can connect and execute the attack while passing nearby.
 Since the Starlink routers do not have passwords by default, this could be a serious concern.
 Executing the attack only requires a few seconds of connection on the local network, and can cause outages on the order of minutes or hours.
-This can be mitigated by using the ``guest network'' mode provided by the router -- this adds an unprotected guest network which does not have access to the administrative interface.
+This can be mitigated by securing the network with a password or, if an unprotected network is absolutely necessary, using the ``guest network'' mode provided by the router.
+This adds an unprotected guest network which does not have access to the administrative interface.
 
 Restoring service requires physical access to the terminal, so disruption will be increased where access is difficult or restricted.
 Examples may include secured rooftop installations.
@@ -26,4 +27,4 @@ Examples may include secured rooftop installations.
 
 This vulnerability has been reported to Starlink through their provided channels.
 It has been triaged and reproduced by their security team, and the root cause was determined to be a bug in the gRPC server's handling of edge cases.
-A fix for this will have been fully deployed by the time of this paper's publication.
+A fix has since been implemented and deployed to Starlink user terminals.

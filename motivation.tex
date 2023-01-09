@@ -1,18 +1,18 @@
 \section{Motivation}\label{sec:motivation}
 
 The Starlink user terminal, similarly to other consumer routers, is configured through a web admin page accessible on the local network.
-This page makes API calls over the local network to query and update the state, therefore providing a promising attack surface for adversaries to attempt to configure the state or deny service by injecting malformed commands.
+This page makes API calls over the local network to query and update the physical state of the terminal, therefore providing a promising attack surface for adversaries to attempt to change the state or deny service by injecting malformed commands.
 
 It is well known that other routers are vulnerable to these techniques.
-Since traffic on the local network is seldom encrypted, local attackers can scrape admin passwords and potentially inject commands.
-Additionally, default admin passwords, combined with browser policies typically allowing cross-origin writes~\cite{same_origin_policy,csrf_internal_network}, have also resulted in configurations vulnerable to attack from outside the local network~\cite{drive_by_pharming}.
+Since traffic on the local network is seldom encrypted, local attackers can sniff admin passwords and potentially inject commands.
+Additionally, default admin passwords, combined with browser policies typically allowing cross-origin writes~\cite{csrf_internal_network,same_origin_policy}, have also resulted in configurations vulnerable to attack from outside the local network~\cite{drive_by_pharming}.
 
 However, unlike other consumer routers, these commands are not password authenticated.
 This allows any device on the local network to send commands to the user terminal, and therefore exploit any vulnerabilities in the command decoding and execution logic.
 This also allows allows insecure devices and certain network configurations to be leveraged by external attackers to inject commands from outside the network.
 Additionally, the lack of rate limiting allows potential adversaries to scan the user terminal for potential vulnerabilities by fuzzing.
 
-In this work we therefore present a security analysis of the Starlink user terminal administrative interface.
+In this work we present a security analysis of the Starlink user terminal administrative interface.
 In Section~\ref{sec:attack}, we present a novel attack in which a malformed command can be sent to put the user terminal into an inoperative state until it can be physically power-cycled.
 In Section~\ref{sec:impact}, we consider the impact of this attack in different scenarios where the configuration command interface can be exploited by on-network adversaries.
 In Section~\ref{sec:discussion}, we discuss the security properties of the system overall, including against remote adversaries who may use browser exploits, IP spoofing, and DNS hijacking to send commands.
