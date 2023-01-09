@@ -1,6 +1,6 @@
 \section{Impact}\label{sec:impact}
 
-This attack can have a significant impact -- as mentioned above, denial of service can be achieved by stowing the dish before sending the ``kill'' command, requiring the dish to by physically power-cycled before service is restored.
+This attack can have a significant impact -- as mentioned above, denial of service can be achieved by stowing the dish before sending the kill command, requiring the dish to by physically power-cycled before service is restored.
 As long as the adversary remains on the local network, this attack can be repeated to cause continuous loss of service for users on the network.
 Therefore, attackers that can maintain presence on the network will have the greatest impact.
 
@@ -14,7 +14,7 @@ The Cross-Origin Resource Sharing (CORS) policies of modern browsers prevent jav
 However, the attacker could trick a user into executing a malicious executable or script, which could easily be used to make these requests.
 
 Furthermore, in some cases ``drive-by'' attacks are possible -- if the network is not password protected, an attacker can connect and execute the attack while passing nearby.
-Since the Starlink routers do not have passwords by default, this could be a serious concern.
+Since the Starlink routers do not password protect the network by default, this is a serious concern.
 Executing the attack only requires a few seconds of connection on the local network, and can cause outages on the order of minutes or hours.
 This can be mitigated by securing the network with a password or, if an unprotected network is absolutely necessary, using the ``guest network'' mode provided by the router.
 This adds an unprotected guest network which does not have access to the administrative interface.

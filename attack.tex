@@ -22,7 +22,7 @@ For instance, to ``stow'' the dish, turning it away from the sky so it can be mo
 
 Although some commands require password authentication, the vast majority do not.
 Among these are telemetry and status requests, logging, and commands affecting the physical state of the dish itself.
-As a result, an adversary on the local network can trivially cause rudimentary denial of service -- for example, by sending the ``stow'' command to rotate the dish away from the sky, leaving it unable to connect to satellites overhead.
+As a result, an adversary on the local network can trivially cause rudimentary denial of service -- for example, by sending the stow command to rotate the dish away from the sky, leaving it unable to connect to satellites overhead.
 By repeatedly sending these commands, service is denied for as long as the attacker can maintain presence.
 
 When encapsulated within HTTP requests, gRPC commands are very small -- the payload is usually between 2 and 5 bytes.
@@ -80,8 +80,8 @@ A physical power-cycle is required in order to restore functionality.
 \label{fig:attack-outcome}
 \end{figure*}
 
-Since the modem will no longer respond to commands, the terminal is frozen in whatever state it was in before the ``kill'' command was sent.
-By first sending a command to stow the dish before sending the ``kill'' command, the adversary can cause denial of service -- it will not be possible to restore internet access until the dish is physically power-cycled.
+Since the modem will no longer respond to commands, the terminal is frozen in whatever state it was in before the kill command was sent.
+By first sending a command to stow the dish before sending the kill command, the adversary can cause denial of service -- it will not be possible to restore internet access until the dish is physically power-cycled.
 
-Appendices~\ref{app:stow} and~\ref{app:kill} contain shell scripts to send the stow command and the malformed ``kill'' command to a user terminal on the local network.
+Appendices~\ref{app:stow} and~\ref{app:kill} contain shell scripts to send the stow command and the malformed kill command to a user terminal on the local network.
 The outcome of this attack can be seen in Figure~\ref{fig:attack-outcome}.
