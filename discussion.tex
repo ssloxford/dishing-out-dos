@@ -38,31 +38,37 @@ Another method is IP spoofing, in which the attacker responds to an HTTP request
 
 \subsection{Mitigations}
 
+Although the attack explored in this paper only directly applies to the Starlink user terminal, we can derive wider lessons on the secure design of satellite routers.
+We proceed to explore some of these mitigations and the challenges surrounding their implementation.
+
 \subsubsection{Password authentication}\label{sec:password_authentication}
 
-One of the key challenges to the security of the Starlink system is the unauthenticated nature of the commands.
-Therefore, sending HTTP requests to the router is sufficient to perform the attack, without the attacker requiring any prior information such as a password.
-However, implementing a password authentication system is non-trivial, and adds inconvenience to the user each time they need to use the interface.
+Password authenticating administrative commands is critical in order to maintain security of the network.
+This is particularly true for satellite modems, where physical hardware is controlled by the modem.
+A secure password should be set by default for administrative operations, which must be randomized per router to prevent reuse by the adversary across multiple networks.
+Manufacturers should also be aware that unencrypted connections to the router over an unsecured network exposes the password to sniffing on the local network.
 
-Since the Starlink modem does not use TLS to secure the connection, any password will be sent in plain text and therefore be sniffable to adversaries on the network.
-However, password authentication by itself still prevents simple drive-by browser exploitation; a malicious website attempting to make a cross-origin request to the modem would not necessarily know the password, and therefore be unable to make the request.
-This mechanism is used by many consumer routers to attempt to prevent this attack~\cite{drive_by_pharming}.
+This is a problem for Starlink routers, which do not password protect the WiFi network by default -- this is considered bad practice, and the vast majority of router manufacturers set a password by default.
+The admin panel is therefore left open to the attacker by default since it is neither encrypted nor password protected.
+The particular challenges surrounding the implementation of encrypted admin interfaces are discussed below.
+
+\subsubsection{Transport Layer Security}
+
+Encrypting the admin interface requires a TLS certificate on the router, which can be verified by the user's browser.
+Further security concerns are raised if these certificates are signed by a root authority, since attackers can extract the certificate from one router and use it on another.
+
+Routers should therefore generate self-signed certificates that can be downloaded by the user and installed into their browser.
+Some routers such as AVM's FRITZ!Box implement this, creating a unique certificate for each router~\cite{fritzbox_cert}.
+Manufacturers implementing this should be aware of the risks of sending the certificate over an initially insecure connection.
 
 \subsubsection{Trust On First Use}
 
-An additional challenge with password authentication is securely establishing a password in the first instance.
+\textbf{TODO: Refactor these in light of structure above}
+One challenge with password authentication is securely establishing a password in the first instance.
 Some routers use default passwords, but don't design the UX to encourage users to change them -- this can expose the router to drive-by exploitation.
 Most commercial routers set a random default password, or implement a Trust On First Use (TOFU) policy, in which there is a default password, but it must be changed after its first use.
 
 The Starlink routers attempt to incentivize the user to change the router SSID by setting it by default to ``Stinky''~\cite{stinky_starlink} -- however, no policy is implemented to encourage secure passwords.
-
-\subsubsection{Transport Layer Security}
-
-To prevent local attackers from sniffing admin passwords, TLS certificates can be used to encrypt the connection.
-Some routers such as AVM's FRITZ!Box implement this, creating a unique certificate for each router~\cite{fritzbox_cert}.
-However, this raises further security concerns -- attackers can extract the certificate from one router and use it on another router.
-This can be mitigated through the use of self-signed certificates; in this scenario, the router signs a certificate which is then downloaded by the user.
-Manufacturers implementing this should be aware of the risks of sending the certificate over an initially insecure connection.
 
 \subsubsection{Guest mode}
 
