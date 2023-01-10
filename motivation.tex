@@ -1,19 +1,43 @@
 \section{Motivation}\label{sec:motivation}
 
-The Starlink user terminal, similarly to other consumer routers, is configured through a web admin page accessible on the local network.
+It is well known that commercial routers present an attack surface through the administrator interface, which can allow attackers to scan for vulnerabilities and reconfigure the router through malicious requests~\cite{niemietz2015owning}.
+These requests can be made either by attackers present on the network or by a victim's browser through ``drive-by'' attacks.
+By reconfiguring commercial routers attackers can achieve outcomes such as denial of service, traffic sniffing, or DNS hijacking~\cite{jeitner2022xdri}.
+Recent router implementations have been secured through better password protection and browser policies.
+
+As new satellite internet providers become more prevalent, new routers are being designed and implemented without the institutional memory of these vulnerabilities and their mitigations.
+Since the router is often part of a physical system including a motorized dish, securing the admin interface is of even greater importance.
+By attacking the admin interface, the attacker can affect the physical state of the dish, opening up new approaches to denial of service by turning the dish away from the sky.
+Furthermore, motors and other hardware can be damaged in this way through overuse.
+
+We therefore assess the security of the Starlink user terminal, paying particular attention to the attack surface exposed by its web admin interface.
+We explore both how requests are made to this interface and the effects of sending undocumented commands, through the use of a fuzzer capable of iterating through the unauthenticated command space.
+Through this approach we find an exploit in the command decoding and execution logic which, when combined with commands affecting the state of the dish, result in denial of service persisting until the router is physically power-cycled.
+This can be widely exploited due to poor security practices such as a lack of password authentication on the admin interface, or default passwords on the WiFi network itself.
+
+We present our findings in this paper, discuss the wider impact of similar attacks on satellite modems, and make recommendations to better secure satellite routers.
+In Section~\ref{sec:threat-model}, we outline the capabilities required to execute attack against satellite router admin interfaces.
+In Section~\ref{sec:attack}, we audit the Starlink user terminal, presenting a novel attack in which a malformed command can be sent to put the user terminal into an inoperative state until it can be physically power-cycled.
+In Section~\ref{sec:impact}, we consider the impact of this attack in different scenarios where the configuration command interface can be exploited by on-network adversaries.
+In Section~\ref{sec:discussion}, we discuss the challenges facing secure router administration in light of these attacks, and make recommendations towards more secure router design.
+
+%In this work we present a security analysis of the Starlink user terminal administrative interface.
+%In Section~\ref{sec:attack}, we audit the user terminal's security, presenting a novel attack in which a malformed command can be sent to put the user terminal into an inoperative state until it can be physically power-cycled.
+%In Section~\ref{sec:impact}, we consider the impact of this attack in
+%different scenarios where the configuration command interface can be exploited by on-network adversaries.
+%In Section~\ref{sec:discussion}, we discuss the security properties of the system overall, including against remote adversaries who may use browser exploits, IP spoofing, and DNS hijacking to send commands.
+
+\begin{comment}
 This page makes API calls over the local network to query and update the physical state of the terminal, therefore providing a promising attack surface for adversaries to attempt to change the state or deny service by injecting malformed commands.
+Unlike the majority of consumer routers, commands on this interface are not password authenticated.
+We explore how this allows any device on the local network to send commands to the terminal, exploiting vulnerabilities in the command decoding and execution logic.
+Through the use of fuzzing, we identify
 
-It is well known that other routers are vulnerable to these techniques.
-Since traffic on the local network is seldom encrypted, local attackers can sniff admin passwords and potentially inject commands.
-Additionally, default admin passwords, combined with browser policies typically allowing cross-origin writes~\cite{csrf_internal_network,same_origin_policy}, have also resulted in configurations vulnerable to attack from outside the local network~\cite{drive_by_pharming}.
-
-However, unlike other consumer routers, these commands are not password authenticated.
 This allows any device on the local network to send commands to the user terminal, and therefore exploit any vulnerabilities in the command decoding and execution logic.
 This also allows insecure devices and certain network configurations to be leveraged by external attackers to inject commands from outside the network.
 Additionally, the lack of rate limiting allows potential adversaries to scan the user terminal for potential vulnerabilities by fuzzing.
 
-In this work we present a security analysis of the Starlink user terminal administrative interface.
-In Section~\ref{sec:threat-model}, we outline the capabilities required to execute attacks on this interface.
-In Section~\ref{sec:attack}, we audit the user terminal's security, presenting a novel attack in which a malformed command can be sent to put the user terminal into an inoperative state until it can be physically power-cycled.
-In Section~\ref{sec:impact}, we consider the impact of this attack in different scenarios where the configuration command interface can be exploited by on-network adversaries.
-In Section~\ref{sec:discussion}, we discuss the security properties of the system overall, including against remote adversaries who may use browser exploits, IP spoofing, and DNS hijacking to send commands.
+It is well known that other routers are vulnerable to these techniques.
+Since traffic on the local network is seldom encrypted, local attackers can sniff admin passwords and potentially inject commands.
+Additionally, default admin passwords, combined with browser policies typically allowing cross-origin writes~\cite{csrf_internal_network,same_origin_policy}, have also resulted in configurations vulnerable to attack from outside the local network~\cite{drive_by_pharming}.
+\end{comment}

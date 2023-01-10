@@ -3,8 +3,7 @@
 The following Python script iterates through all commands of length 3 with a trailing zero byte, and logs those that do not return error code 13 (invalid) or 12 (unimplemented). This can be easily modified to send commands of different lengths, or to send commands in a random order.
 
 \begin{lstlisting}
-import requests
-import random
+import requests, random
 from tqdm import tqdm
 
 url = "http://192.168.100.1:9201/SpaceX.API.Device.Device/Handle"

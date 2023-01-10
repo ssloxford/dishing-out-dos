@@ -18,12 +18,12 @@ These restrictions are primarily designed to disallow websites reading data from
 In the case of Starlink, the server at \texttt{192.168.100.1} reports that only connections from ``\url{http://my.starlink.com}'' are allowed.
 As a result, browsers that enforce the CORS policy will refuse to allow websites other than ``\url{http://my.starlink.com}'' to read the responses of requests that are made.
 
-However, in the case of the Starlink dish and several other routers, changing the configuration doesn't require reading the response, only making the requests in the first place~\cite{drive_by_pharming}.
+However, in the case of the Starlink dish and several other routers, changing the configuration only requires the request to be made, without reading the response~\cite{drive_by_pharming}.
 To secure this case, non-simple requests now trigger a CORS preflight request to confirm the \texttt{Access-Control-Allow-Origin} before sending the initial request~\cite{simple_requests, preflight_request}.
 
 In certain routers, only simple requests are required to change the state, and are therefore vulnerable to drive-by browser exploitation even on modern browsers~\cite{csrf_internal_network}.
 However, the POST request used to configure the Starlink dish requires the \texttt{content-type: application/grpc-web+proto} header, making it non-simple.
-As a result, the Starlink dish is only exploitable using this method on older browsers which do not use the preflight check~\cite{cors_w3c}.
+This is the only reason that the Starlink dish is not directly exploitable on modern browsers; it is still, however, vulnerable on older browsers older browsers which do not use the preflight check~\cite{cors_w3c}.
 
 \subsubsection{Local network attack}
 
@@ -34,7 +34,7 @@ However, by more subtly acting on the local network, the attacker can still affe
 One method is through DNS hijacking, in which the attacker responds to DNS requests on the local network to redirect the ``\url{http://my.starlink.com}'' domain to their own server.
 This is possible, even if TLS were used, since the browser does not expect a secure connection; we argue this can be resolved through the use of HTTP Strict Transport Security~\cite{rfc6797}.
 
-Another method is IP spoofing, in which the attacker responds to an HTTP request to ``\url{http://my.starlink.com}'' with a maliciously formed website in order to make the request to the router.
+Another method is IP spoofing, in which the attacker responds to a request to ``\url{http://my.starlink.com}'' with a malicious website in order to make the request to the router.
 
 \subsection{Mitigations}
 
@@ -48,8 +48,14 @@ This is particularly true for satellite modems, where physical hardware is contr
 A secure password should be set by default for administrative operations, which must be randomized per router to prevent reuse by the adversary across multiple networks.
 Manufacturers should also be aware that unencrypted connections to the router over an unsecured network exposes the password to sniffing on the local network.
 
+Since password entry adds friction to the user experience, some manufacturers do not set a default administrator password, or set the same password across all routers.
+In this case it is vital that the user is made to change this password early on, to protect the router from drive-by exploitation.
+This can be achieved by requiring a password change after the first use.
+
 This is a problem for Starlink routers, which do not password protect the WiFi network by default -- this is considered bad practice, and the vast majority of router manufacturers set a password by default.
 The admin panel is therefore left open to the attacker by default since it is neither encrypted nor password protected.
+The Starlink routers attempt to incentivize the user to change the router SSID by setting it by default to ``Stinky''\footnote{\url{https://twitter.com/elonmusk/status/1538202890258591744}} -- however, no policy is implemented to encourage secure passwords.
+
 The particular challenges surrounding the implementation of encrypted admin interfaces are discussed below.
 
 \subsubsection{Transport Layer Security}
@@ -58,25 +64,18 @@ Encrypting the admin interface requires a TLS certificate on the router, which c
 Further security concerns are raised if these certificates are signed by a root authority, since attackers can extract the certificate from one router and use it on another.
 
 Routers should therefore generate self-signed certificates that can be downloaded by the user and installed into their browser.
-Some routers such as AVM's FRITZ!Box implement this, creating a unique certificate for each router~\cite{fritzbox_cert}.
-Manufacturers implementing this should be aware of the risks of sending the certificate over an initially insecure connection.
-
-\subsubsection{Trust On First Use}
-
-\textbf{TODO: Refactor these in light of structure above}
-One challenge with password authentication is securely establishing a password in the first instance.
-Some routers use default passwords, but don't design the UX to encourage users to change them -- this can expose the router to drive-by exploitation.
-Most commercial routers set a random default password, or implement a Trust On First Use (TOFU) policy, in which there is a default password, but it must be changed after its first use.
-
-The Starlink routers attempt to incentivize the user to change the router SSID by setting it by default to ``Stinky''~\cite{stinky_starlink} -- however, no policy is implemented to encourage secure passwords.
+Some routers such as AVM's \textit{FRITZ!Box} implement this, creating a unique certificate for each router~\cite{fritzbox_cert}.
+Manufacturers implementing this should be aware of the risks of sending the certificate over an initially insecure connection -- the user can be guided through the process of installing the certificate on first use.
+This provides a similar level of security to that provided by Trust On First Use (TOFU) policies used by SSH and other tools.
 
 \subsubsection{Guest mode}
 
-If an unencrypted network is required, then access to the admin interface must be limited.
-The Starlink modem implements this through a ``guest mode'', providing a network which does not have access to the admin interface.
-This protects the terminal from reconfiguration by untrusted users.
+If password authentication is not used on the administrator interface, it is difficult to prevent malicious web pages from making requests to the interface, and impossible to prevent local users from doing so.
 
-The terminal could be made slightly more secure by disconnecting the administrative interface from the public internet, disabling any form of drive-by attack.
+These issues are partially mitigated by Starlink's ``guest mode'', in which users can join a public-facing network that does not have access to the admin interface.
+This protects the terminal from reconfiguration by untrusted users.
+A more secure approach would only allow users to access the interface when on a dedicated admin network, which cannot access the public internet.
+This disables any form of drive-by attack.
 
 \begin{comment}
   Edd's notes:
