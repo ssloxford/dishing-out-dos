@@ -1,7 +1,8 @@
 \begin{abstract}
-The Starlink user terminal is vulnerable to a denial of service attack, in which the dish is put into an inoperative state until it can be manually rebooted by physically power-cycling the terminal.
+Satellite user terminals are a promising target for adversaries seeking to target satellite communication networks.
+Despite this, many protections commonly found in terrestrial routers are not present in some user terminals.
 
-In this paper we describe this attack in detail, including the fuzzing process used to discover it.
-We also explore the impact of the attack, particularly in the cases of drive-by attackers, and attackers that are able to maintain a continuous presence on the network.
-Finally, we discuss the wider implications, looking at common security challenges faced by commercial routers, and how they can be mitigated without sacrificing user experience.
+As a case study we audit the attack surface presented by the Starlink router's admin interface, using fuzzing to uncover a denial of service attack on the Starlink user terminal.
+We explore the attack's impact, particularly in the cases of drive-by attackers, and attackers that are able to maintain a continuous presence on the network.
+Finally, we discuss wider implications, looking at lessons learned in terrestrial router security, and how to properly implement them in this new context.
 \end{abstract}

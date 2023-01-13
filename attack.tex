@@ -56,8 +56,8 @@ Although the commands use a non-human-readable encoding, this knowledge of the c
 Code for the fuzzer can be found in Appendix~\ref{app:fuzzer} -- this script iterates through all gRPC commands of a certain length.
 The vast majority of these return ``invalid'' or ``unimplemented'' error codes, so the fuzzer discards these, only saving those that return other codes.
 Table~\ref{tab:fuzzer-results} shows the distribution of error codes on all 2-byte commands.
-None of these commands are valid, so we move onto 3 byte commands.
-There are too many of these to enumerate, so we focus on those ending with a zero byte, as this matches many known commands.
+We can see that none of these 2-byte commands are valid.
+For the 3-byte commands, there are too many to enumerate, so we focus on those ending with a zero byte, as this matches many known commands.
 
 This fuzzing approach led to the discovery of the ``kill'' command \lstinline{00 00 00 00 03 EA 3E 00}, which causes the command handler of the user terminal to crash.
 This stops the modem from responding to commands, but does not stop the terminal from functioning, effectively freezing its settings and state until the terminal is rebooted.

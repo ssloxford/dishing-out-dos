@@ -23,7 +23,7 @@ To secure this case, non-simple requests now trigger a CORS preflight request to
 
 In certain routers, only simple requests are required to change the state, and are therefore vulnerable to drive-by browser exploitation even on modern browsers~\cite{csrf_internal_network}.
 However, the POST request used to configure the Starlink dish requires the \texttt{content-type: application/grpc-web+proto} header, making it non-simple.
-This is the only reason that the Starlink dish is not directly exploitable on modern browsers; it is still, however, vulnerable on older browsers older browsers which do not use the preflight check~\cite{cors_w3c}.
+This is the only reason that the Starlink dish is not directly exploitable on modern browsers; it is still, however, vulnerable on older browsers which do not use the preflight check~\cite{cors_w3c}.
 
 \subsubsection{Local network attack}
 
@@ -38,8 +38,15 @@ Another method is IP spoofing, in which the attacker responds to a request to ``
 
 \subsection{Mitigations}
 
-Although the attack explored in this paper only directly applies to the Starlink user terminal, we can derive wider lessons on the secure design of satellite routers.
-We proceed to explore some of these mitigations and the challenges surrounding their implementation.
+The attack explored in this paper directly applies to the Starlink user terminal, but the approach can be generalized to other satellite routers.
+Although similar to traditional routers, the physical aspect of these systems increases the importance of properly securing them.
+Despite this, known security improvements from terrestrial router design have not been brought forward.
+We proceed to explore these below.
+
+%However, we want to highlight that lessons learned from traditional router design are all the more important in this new context.
+
+%Although the attack explored in this paper only directly applies to the Starlink user terminal, we can derive wider lessons on the secure design of satellite routers.
+%we want to highlight that lessons learned from traditional router design are all the more important in this new context
 
 \subsubsection{Password authentication}\label{sec:password_authentication}
 
@@ -61,7 +68,7 @@ The particular challenges surrounding the implementation of encrypted admin inte
 \subsubsection{Transport Layer Security}
 
 Encrypting the admin interface requires a TLS certificate on the router, which can be verified by the user's browser.
-Further security concerns are raised if these certificates are signed by a root authority, since attackers can extract the certificate from one router and use it on another.
+Further security concerns are raised if certificates are signed by a root authority, since attackers can extract a certificate from one router and use it on another.
 
 Routers should therefore generate self-signed certificates that can be downloaded by the user and installed into their browser.
 Some routers such as AVM's \textit{FRITZ!Box} implement this, creating a unique certificate for each router~\cite{fritzbox_cert}.
