@@ -27,49 +27,38 @@
 \begin{document}
 
 \title{Dishing out DoS: How to Disable\\and Secure the Starlink User Terminal}
-% Dishing out Disaster
-% Dishing out DoS
-% The Dishy Terminator
-% Space Oddity
-% Fuzzing with the Stars
-% Starlink: Dish Served Cold
 
-\author{Anonymous Authors}
+\makeatletter
+\newcommand{\linebreakand}{%
+  \end{@IEEEauthorhalign}
+  \hfill\mbox{}\par
+  \mbox{}\hfill\begin{@IEEEauthorhalign}
+}
+\makeatother
 
-\begin{comment}
-\author{\IEEEauthorblockN{Joshua Smailes}
+\author{\IEEEauthorblockN{Joshua Smailes\textsuperscript{\textdagger}}
 \IEEEauthorblockA{University of Oxford\\
 joshua.smailes@cs.ox.ac.uk}
 \and
-\IEEEauthorblockN{Edd Salkield}
+\IEEEauthorblockN{Edd Salkield\textsuperscript{\textdagger}}
 \IEEEauthorblockA{University of Oxford\\
 edd.salkield@cs.ox.ac.uk}
-\and
+\linebreakand
 \IEEEauthorblockN{Simon Birnbach}
 \IEEEauthorblockA{University of Oxford\\
 simon.birnbach@cs.ox.ac.uk}
 \and
 \IEEEauthorblockN{Martin Strohmeier}
-\IEEEauthorblockA{Cyber-Defence Campus, armasuisse Science + Technology\\
+\IEEEauthorblockA{armasuisse Science + Technology\\
 martin.strohmeier@armasuisse.ch}
 \and
 \IEEEauthorblockN{Ivan Martinovic}
 \IEEEauthorblockA{University of Oxford\\
-ivan.martinovic@cs.ox.ac.uk}}
-\end{comment}
-
-\begin{comment}
-\IEEEoverridecommandlockouts
-\makeatletter\def\@IEEEpubidpullup{6.5\baselineskip}\makeatother
-\IEEEpubid{\parbox{\columnwidth}{
-    Network and Distributed System Security (NDSS) Symposium 2023\\
-    28 February - 4 March 2023, San Diego, CA, USA\\
-    ISBN 1-891562-83-5\\
-    https://dx.doi.org/10.14722/ndss.2023.23xxx\\
-    www.ndss-symposium.org
+ivan.martinovic@cs.ox.ac.uk}
+\linebreakand
+\hspace{-22.9em}
+\small{\textdagger\;The authors contributed equally to this paper.}
 }
-\hspace{\columnsep}\makebox[\columnwidth]{}}
-\end{comment}
 
 \maketitle
 
@@ -84,9 +73,8 @@ ivan.martinovic@cs.ox.ac.uk}}
 
 \section*{Acknowledgments}
 
-The authors would like to thank the Starlink responsible disclosure team for promptly confirming the issue and deploying a fix, and working with us to ensure the technical details within this paper are accurate.
-
-\clearpage
+The authors would like to thank the Starlink responsible disclosure team for promptly confirming the issue, deploying a fix, and ensuring that the technical details within this paper are accurate.
+We would further like to thank armasuisse Science and Technology for working closely with us and providing access to the hardware.
 
 % Fix repeated authors showing as dash
 \bstctlcite{IEEEexample:BSTcontrol}
@@ -97,6 +85,7 @@ The authors would like to thank the Starlink responsible disclosure team for pro
 \appendices
 
 \input{appendices/fuzzer.tex}
+\clearpage
 \input{appendices/stow-and-kill.tex}
 
 \end{document}
