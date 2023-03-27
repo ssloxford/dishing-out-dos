@@ -1,31 +1,18 @@
-\section{Impact}\label{sec:impact}
+\section{Impact and Mitigations}\label{sec:impact}
 
-These attacks can have a significant impact -- in Starlink's case, denial of service can be achieved by stowing the dish before sending the kill command, requiring the dish to be physically power-cycled before service is restored.
-Repeated stowing and unstowing of the dish can also cause damage to the physical hardware.
-As long as the adversary remains on the network, attacks can be repeated to cause continuous loss of service.
-Therefore, attackers that can maintain presence on the network will have the greatest impact.
-
-Since attacks can be deployed from any device connected to the local network, large networks containing many untrusted users are at the greatest risk.
-Such networks also suffer greater impact, as more devices are affected by network disruptions.
-The impact is magnified when Starlink is the only source of internet access for that customer.
+Since this attack can be deployed from any device connected to the local network, large networks containing many untrusted users are at the greatest risk.
 Examples may include maritime and aviation traffic, internet cafés, or large organizations.
-
-There is also potential for remote attacks, provided the attacker can in some way cause a device on the same network as the dish to send HTTP requests.
-The Cross-Origin Resource Sharing (CORS) policies of modern browsers prevent javascript from making unauthorized requests to external domains or addresses, so javascript-based attacks are unlikely unless legacy browsers are used~\cite{cors}.
-However, the attacker could trick a user into executing a malicious executable or script, which could easily be used to make these requests.
-
-Furthermore, if the network is not password protected, an attacker can connect and execute the attack while passing nearby.
 Since the Starlink routers do not password protect the network by default, this is a serious concern.
-Executing the attack only requires a few seconds of connection on the local network, and can cause outages on the order of minutes or hours.
-This can be mitigated by securing the network with a password or, if an unprotected network is absolutely necessary, using the ``guest network'' mode provided by the router.
-This adds an unprotected guest network which does not have access to the administrative interface.
 
-Restoring service requires physical access to the terminal, so disruption will be increased where access is difficult or restricted.
-Examples may include secured rooftop installations.
+There is also potential for remote ``drive-by'' attacks, provided the attacker can in some way cause a device on the same network as the dish to send HTTP requests.
+This is because executing the attack only requires a few seconds of connection on the local network, and can cause outages on the order of minutes or hours.
+The Cross-Origin Resource Sharing (CORS) policies of modern browsers prevent javascript from making unauthorized requests to external domains or addresses, so javascript-based attacks are unlikely unless legacy browsers are used~\cite{cors}.
+However, the lack of encryption on the connection to ``http://my.starlink.com'' allows local attackers to hijack the DNS requests or respond with a malicious website to make the request instead.
+Furthermore, the attacker could trick a user into executing a malicious executable or script, which could easily be used to make these requests.
+
+We argue for the importance of securing these physical systems through satellite router configuration.
+Even simple mitigations, such as adopting password protection, using local TLS certificates, and the use of HTTP Strict Transport Security~\cite{rfc6797} would prevent many such attack vectors.
 
 
-\subsection{Responsible Disclosure}\label{sec:responsible-disclosure}
-
-This vulnerability has been reported to Starlink through their provided channels.
-It has been triaged and reproduced by their security team, and the root cause was determined to be a bug in the gRPC server's handling of edge cases.
-A fix has since been implemented in patch \textit{8c03f1b9-de75-404b-87fd-7986892cdacb.uterm.release} and deployed to Starlink user terminals in December 2022.
+Furthermore, a dedicated administrative wireless network would prevent drive-by attacks, since no device will be connected both to the administrative interface and the public internet.
+This bears similarities to the ``guest network'' feature already provided, which provides an internet connection without access to the guest network.

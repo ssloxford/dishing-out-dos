@@ -11,11 +11,12 @@
 \usepackage{amsmath}
 \usepackage{algpseudocode}
 \usepackage{listings}
-\usepackage{subcaption}
+%\usepackage{subcaption}
 \usepackage{comment}
 \usepackage[hyphens]{url}
 \usepackage[hidelinks]{hyperref}
-\usepackage[subtle,tracking=normal]{savetrees}
+\usepackage{flushend}
+
 \lstset{
   basicstyle=\ttfamily,
   columns=fullflexible,
@@ -65,27 +66,13 @@ ivan.martinovic@cs.ox.ac.uk}
 \input{abstract.tex}
 
 \input{motivation.tex}
-\input{threat-model.tex}
 \input{attack.tex}
 \input{impact.tex}
-\input{discussion.tex}
 \input{conclusion.tex}
 
-\section*{Acknowledgments}
-
-The authors would like to thank the Starlink responsible disclosure team for promptly confirming the issue, deploying a fix, and ensuring that the technical details within this paper are accurate.
-We would further like to thank armasuisse Science and Technology for working closely with us and providing access to the hardware.
-
-% Fix repeated authors showing as dash
 \bstctlcite{IEEEexample:BSTcontrol}
 
 \bibliographystyle{IEEEtranS}
 \bibliography{IEEEabrv,main}
-
-\appendices
-
-\input{appendices/fuzzer.tex}
-\clearpage
-\input{appendices/stow-and-kill.tex}
 
 \end{document}

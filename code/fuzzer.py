@@ -1,8 +1,8 @@
-\section{Fuzzer Source Code}\label{app:fuzzer}
+#!/usr/bin/python3
 
-The following Python script iterates through all commands of length 3 with a trailing zero byte, and logs those that do not return error code 13 (invalid) or 12 (unimplemented). This can be easily modified to send commands of different lengths, or to send commands in a random order.
+# Iterate through all commands of length 3 with a trailing zero byte
+# Log those that do not return error code 13 (invalid) or 12 (unimplemented)
 
-\begin{lstlisting}
 import requests, random
 from tqdm import tqdm
 
@@ -35,4 +35,3 @@ for data in tqdm(generate_bytes(2, length_header=3), total=256**2):
         print("Found something!")
         print(response)
         results.append((data, response))
-\end{lstlisting}

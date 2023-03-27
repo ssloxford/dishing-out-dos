@@ -1,22 +1,19 @@
 \section{Motivation}\label{sec:motivation}
 
-It is well known that commercial routers present an attack surface through the administrator interface, which can allow attackers to scan for vulnerabilities and reconfigure the router through malicious requests~\cite{niemietz2015owning}.
-These requests can be made either by attackers present on the network or by a victim's browser through ``drive-by'' attacks.
-By reconfiguring commercial routers attackers can achieve outcomes such as denial of service, traffic sniffing, or DNS hijacking~\cite{jeitner2022xdri}.
-Recent router implementations have been secured through better password protection and browser policies.
-
-As new satellite internet providers become more prevalent, new routers are being designed and implemented without the institutional memory of these vulnerabilities and their mitigations.
-Since the router is often part of a physical system including a motorized dish, securing the admin interface is of even greater importance.
-By attacking the admin interface, the attacker can affect the physical state of the dish, opening up new approaches to denial of service by turning the dish away from the sky.
-Furthermore, motors and other hardware can be damaged in this way through overuse.
+It is well known that router administrator interfaces present an attack surface, allowing attackers to scan for vulnerabilities and reconfigure the router through malicious requests~\cite{niemietz2015owning,jeitner2022xdri}.
+Unlike in a terrestrial setting, a satellite internet router is often part of a physical system including a motorized dish which can be affected.
+However, these new routers are being implemented without the institutional memory of historic vulnerabilities and their mitigations, opening up new denial of service attacks through rotating the dish and overusing the motor.
 
 We therefore assess the security of the Starlink user terminal, paying particular attention to the attack surface exposed by its web admin interface.
 We explore both how requests are made to this interface and the effects of sending undocumented commands, through the use of a fuzzer capable of iterating through the unauthenticated command space.
 Through this approach we find an exploit in the command decoding and execution logic which, when combined with commands affecting the state of the dish, result in denial of service persisting until the router is physically power-cycled.
 This can be widely exploited due to poor security practices such as a lack of password authentication on the admin interface, or default passwords on the WiFi network itself.
 
-We present our findings in this paper, discuss the wider impact of similar attacks on satellite modems, and make recommendations to better secure satellite routers.
-In Section~\ref{sec:threat-model}, we outline the capabilities required to execute attacks against satellite router admin interfaces.
-In Section~\ref{sec:attack}, we audit the Starlink user terminal, presenting a novel attack in which a malformed command can be sent to put the user terminal into an inoperative state until it can be physically power-cycled.
-In Section~\ref{sec:impact}, we consider the impact of this attack in different scenarios where the configuration command interface can be exploited by on-network adversaries.
-In Section~\ref{sec:discussion}, we discuss the challenges facing secure router administration in light of these attacks, and make recommendations towards more secure router design.
+This vulnerability was reported to Starlink, and a fix has been promptly deployed.
+
+\begin{figure}
+    \centering\includegraphics[width=\columnwidth]{img/modem.pdf}
+    \caption{Overview of the Starlink modem functionality. gRPC calls are encapsulated within HTTP POST requests by the web interface, which are decoded and processed. Malformed gRPC requests cause the command handler to crash, resulting in the modem no longer being able to respond to commands.}
+    \label{fig:modem}
+    \vspace{-1em}
+\end{figure}
