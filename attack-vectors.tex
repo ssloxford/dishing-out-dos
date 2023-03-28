@@ -1,0 +1,7 @@
+\section{Attack vectors}\label{sec:attack-vectors}
+
+This attack requires that a device is connected to the local network for just a few seconds to send HTTP POST requests to the modem.
+This can be accomplished through a new malicious device on the network, or exploiting an existing device through a browser ``drive-by'' attack.
+Whilst the Cross-Origin Resource Sharing (CORS) policies of modern browsers prevent unauthorized requests to external domains, legacy browsers are vulnerable~\cite{cors}.
+Although the lack of encryption to ``http://my.starlink.com'' increases convenience in not configuring local certificates, local attackers can hijack the DNS requests or respond with a malicious website to make the request instead.
+The attacker could alternatively trick a user into executing a malicious executable or script to make the requests.

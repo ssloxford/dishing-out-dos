@@ -17,15 +17,13 @@
 \vspace{-1.5em}
 \end{figure*}
 
-The Starlink user terminal is typically administered via the ``\url{http://my.starlink.com}'' web interface.
-This sends commands to the modem over the local network, using gRPC (Google Remote Procedure Calls) encapsulated within HTTP ``POST'' requests.
-As shown in Figure~\ref{fig:modem}, these requests are decoded by a gRPC web proxy, and forwarded to a command handler.
+The Starlink user terminal is typically administered via the ``\url{http://my.starlink.com}'' web interface, which sends gRPC commands to the modem over the local network.
+As shown in Figure~\ref{fig:modem}, these requests are decoded by a gRPC web proxy and forwarded to a command handler.
 
-Although some gRPC commands require password authentication, the vast majority do not, including commands affecting the physical state of the dish.
+The vast majority of gRPC commands require no authentication, including commands affecting the physical state of the dish.
+We note, in particular, that the ``dish stow'' command, which stops communication with the satellites, requires no authentication.
 
-Since the gRPC payload is usually between 2 and 5 bytes, the command space can be fuzzed with random contents to discover corner cases in the command handler which lead to unexpected behavior.
-Through this we discovered the ``kill'' command \lstinline{00 00 00 00 03 EA 3E 00}, which causes the command handler of the user terminal to crash.
-
-Since the modem will no longer respond to commands, the terminal is frozen in whatever state it was in before the kill command was sent.
-An attacker can therefore lock the physical dish into a stowed state as seen in Figuree~\ref{fig:attack-outcome}, persistently denying service even after the attacker is no longer present on the network.
-In this state, restoring internet access requires a physical power-cycle.
+Since the gRPC payload is usually between 2 and 5 bytes, the command space can be fuzzed with random contents to discover unexpected behavior in the command handler\footnote{Source code available at \textit{\url{https://github.com/ssloxford/dishing-out-dos}}}.
+Through this we discovered invalid command \lstinline{00 00 00 00 03 EA 3E 00} which causes the command handler of the user terminal to crash and no longer respond to commands.
+This allows the attacker to lock the physical dish into a stowed state as seen in Figure~\ref{fig:attack-outcome}, persistently denying service even after the attacker is no longer present on the network.
+Restoring internet access requires a physical power-cycle.

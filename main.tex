@@ -1,4 +1,4 @@
-\documentclass[conference]{IEEEtran}
+\documentclass[sigconf,natbib=false]{acmart}
 
 \pagestyle{plain}
 
@@ -13,9 +13,11 @@
 \usepackage{listings}
 \usepackage{subcaption}
 \usepackage{comment}
-\usepackage[hyphens]{url}
-\usepackage[hidelinks]{hyperref}
 \usepackage{flushend}
+\usepackage[absolute,overlay]{textpos}
+
+\usepackage[style=acmnumeric,citestyle=numeric-comp,backend=biber,sorting=none]{biblatex}
+\addbibresource{main.bib}
 
 \lstset{
   basicstyle=\ttfamily,
@@ -25,54 +27,65 @@
   tabsize=4,
 }
 
+\setcopyright{acmcopyright}
+\copyrightyear{2022}
+\acmYear{2022}
+\acmDOI{10.1145/xxxxxxx.xxxxxxx}
+
+\acmConference[WiSec '23]{WiSec '23: 16th ACM Conference on Security and Privacy in Wireless and Mobile Networks}{May 29--June 01, 2023}{Guildford, Surrey, United Kingdom}
+\acmBooktitle{WiSec '23: 16th ACM Conference on Security and Privacy in Wireless and Mobile Networks, May 29--June 01, 2023, Guildford, Surrey, United Kingdom}
+\acmISBN{978-1-4503-XXXX-X/21/06}
+
 \begin{document}
 
-\title{Dishing out DoS: How to Disable\\and Secure the Starlink User Terminal}
+\title{POSTER: Dishing out DoS: How to Disable\\and Secure the Starlink User Terminal}
 
-\makeatletter
-\newcommand{\linebreakand}{%
-  \end{@IEEEauthorhalign}
-  \hfill\mbox{}\par
-  \mbox{}\hfill\begin{@IEEEauthorhalign}
-}
-\makeatother
+\author{Edd Salkield}
+\authornotemark[2]
+\email{edd.salkield@cs.ox.ac.uk}
+\affiliation{%
+  \institution{University of Oxford}
+  \country{United Kingdom}}
 
-\author{\IEEEauthorblockN{Edd Salkield\textsuperscript{\textdagger}}
-\IEEEauthorblockA{University of Oxford\\
-edd.salkield@cs.ox.ac.uk}
-\and
-\IEEEauthorblockN{Joshua Smailes\textsuperscript{\textdagger}}
-\IEEEauthorblockA{University of Oxford\\
-joshua.smailes@cs.ox.ac.uk}
-\linebreakand
-\IEEEauthorblockN{Sebastian K{\"o}hler}
-\IEEEauthorblockA{University of Oxford\\
-sebastian.kohler@cs.ox.ac.uk}
-\and
-\IEEEauthorblockN{Simon Birnbach}
-\IEEEauthorblockA{University of Oxford\\
-simon.birnbach@cs.ox.ac.uk}
-\and
-\IEEEauthorblockN{Ivan Martinovic}
-\IEEEauthorblockA{University of Oxford\\
-ivan.martinovic@cs.ox.ac.uk}
-\linebreakand
-\hspace{-22.9em}
-\small{\textdagger\;The authors contributed equally to this paper.}
-}
+\author{Joshua Smailes}
+\authornotemark[2]
+\email{joshua.smailes@cs.ox.ac.uk}
+\affiliation{%
+  \institution{University of Oxford}
+  \country{United Kingdom}}
 
-\maketitle
+\author{Sebastian K{\"o}hler}
+\email{sebastian.kohler@cs.ox.ac.uk}
+\affiliation{%
+  \institution{University of Oxford}
+  \country{United Kingdom}}
+
+\author{Simon Birnbach}
+\email{simon.birnbach@cs.ox.ac.uk}
+\affiliation{%
+  \institution{University of Oxford}
+  \country{United Kingdom}}
+
+\author{Ivan Martinovic}
+\email{ivan.martinovic@cs.ox.ac.uk}
+\affiliation{%
+  \institution{University of Oxford}
+  \country{United Kingdom\\\,}}
 
 \input{abstract.tex}
 
+\maketitle
+
+\begin{textblock*}{7cm}(1.8cm,8.5cm)
+  \small{\textdagger\;Both authors contributed equally to this paper.}
+\end{textblock*}
+
+\vspace{-1em}
 \input{motivation.tex}
 \input{attack.tex}
+\input{attack-vectors.tex}
 \input{impact.tex}
 \input{conclusion.tex}
 
-\bstctlcite{IEEEexample:BSTcontrol}
-
-\bibliographystyle{IEEEtranS}
-\bibliography{IEEEabrv,main}
-
+\printbibliography
 \end{document}
